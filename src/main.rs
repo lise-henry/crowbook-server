@@ -16,11 +16,13 @@ use router::Router;
 use crowbook::Book;
 use crowbook::Number;
 use crowbook::HtmlSingleRenderer;
+use crowbook::EpubRenderer;
 use crowbook::InfoLevel;
 use tempfile::NamedTempFile;
 
 use std::error::Error;
 use std::io::Write;
+use std::io::Read;
 
 use config::Config;
 
@@ -79,22 +81,57 @@ fn main() {
         Ok(Response::with((content_type, status::Ok, text)))
     }
 
+    fn render_book(config: &Config) -> crowbook::Result<Response> {
+        let mut tmpfile = NamedTempFile::new().unwrap();
+        tmpfile.write_all(config.text.as_bytes()).unwrap();
+
+        match config.output.as_str() {
+            "html" => {
+                let mut book = try!(Book::new_from_markdown_file(tmpfile.path().to_str().unwrap(), InfoLevel::Quiet, &[]));
+                let mut renderer = HtmlSingleRenderer::new(&book);
+                let content = try!(renderer.render_book());
+                let content_type = "text/html; charset=UTF-8".parse::<Mime>().unwrap();
+                return Ok(Response::with((content_type, status::Ok, content)));
+            },
+            "epub" => {
+                let mut epubfile = NamedTempFile::new().unwrap();
+                let book = try!(Book::new_from_markdown_file(tmpfile.path().to_str().unwrap(),
+                                                             InfoLevel::Quiet,
+                                                             &[("output.epub", epubfile.path().to_str().unwrap())]));
+                let mut renderer = EpubRenderer::new(&book);
+
+                try!(renderer.render_book());
+                let mut content = vec!();
+                epubfile.read_to_end(&mut content).unwrap();
+                let content_type = "application/epub+zip".parse::<Mime>().unwrap();
+                return Ok(Response::with((content_type, status::Ok, content)));
+            }
+            _ => {
+                return Err(crowbook::Error::default(crowbook::Source::empty(),
+                                                    "Unrecognized output format"));
+            },
+        }
+    }
+
+    fn show_error<S: ::std::fmt::Display>(error: S) -> Response {
+        let content_type = "text/html; charset=UTF-8".parse::<Mime>().unwrap();
+        let content = format!("<html><body>{}</body></html>", error);
+        Response::with((content_type, status::Ok, content))
+    }
+
     fn show_result(request: &mut Request) -> IronResult<Response> {
         let result:Result<Config,String> = Config::new_from_request(request);
         let response = match result {
             Ok(config) => {
-                let mut tmpfile = NamedTempFile::new().unwrap();
-                tmpfile.write_all(config.text.as_bytes()).unwrap();
-
-                let mut book = Book::new_from_markdown_file(tmpfile.path().to_str().unwrap(), InfoLevel::Quiet, &[]).unwrap();
-                let mut renderer = HtmlSingleRenderer::new(&book);
-                renderer.render_book().unwrap()
+                match render_book(&config) {
+                    Ok(response) => response,
+                    Err(e) => show_error(format!("Error: {}", e)),
+                }
             },
-            Err(e) => format!("<html><body>{}</body></html>", e),
+            Err(e) => show_error(format!("Error: {}", e)),
         };
-        
-        let content_type = "text/html; charset=UTF-8".parse::<Mime>().unwrap();
-        Ok(Response::with((content_type, status::Ok, response)))        
+
+        Ok(response)
     }
     
     let ips = vec!("127.0.0.1:3000");

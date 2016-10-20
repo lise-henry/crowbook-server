@@ -22,7 +22,7 @@
       <section class="top-bar-section">
         <!-- Right Nav Section -->
         <ul class="right">
-          <li><a href="doc_en">Documentation</a></li>
+          <!-- <li><a href="doc_en">Documentation</a></li> -->
           <li><a href="https://github.com/lise-henry/crowbook">Github page</a></li>
         </ul>
         
@@ -55,7 +55,7 @@
               <div class = "large-12 columns">
                 <label>Input text
                 </label>
-                <textarea id = "text_input" name = "text" rows = "20" cols = "80">
+                <textarea id = "text_input" name = "text" rows = "20" style = "width: 100%;">
 ---
 author: your name
 title: your title
@@ -114,16 +114,27 @@ rendering.initials: true   # A big initial at the beginning of the chapter!
 html.header: "MY BOOK"     # A header at the top of the HTML page
 html.footer: "ME"          # A footer at the bottom of the HTML page
 ```
-
 		</textarea>
               </div>
             </div>
+	    <div class = "row collapse">
+	      <div class = "large-3 columns">
+		<span class = "prefix" title = "Output format">Output format</span>
+	      </div>
+	      <div class = "large-2 columns">
+		<select name = "output" style = "width: 100%;">
+		  <option value = "html" selected>HTML</option>
+		    <option value = "epub">EPUB</option>
+		</select>
+	      </div>
+	      <div class = "large-2 columns">
+		<p class = "button postfix" onclick="document.getElementById('crowbook_form').submit();">
+		  OK
+		</p>
+	      </div>
+	    </div>
           </div>
         </div>
-	<div class = "row">
-	  <div class = "large-2 columns">
-	    <input type = "submit" value = "OK" />
-	  </div>
       </form>
     </div>
   </body>

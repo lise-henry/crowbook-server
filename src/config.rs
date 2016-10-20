@@ -7,13 +7,15 @@ use std::env;
 #[derive(Debug)]
 pub struct Config {
     pub text: String,
+    pub output: String,
 }
 
 impl Config {
     /// New default config
-    pub fn new(text: &str) -> Config {
+    pub fn new(text: &str, output: &str) -> Config {
         Config {
             text: text.to_string(),
+            output: output.to_string(),
          }
     }
 
@@ -21,9 +23,11 @@ impl Config {
                             -> Result<Config,String> {
         match request.get_ref::<UrlEncodedBody>() {
             Ok(hashmap) => {
-                let config = match hashmap.get("text") {
-                    Some(v) => Config::new(&v[0]),
-                    None =>  return Err("Didn't find 'text' in POST hashmap".to_string())
+                let text = hashmap.get("text");
+                let output = hashmap.get("output");
+                let config = match (text, output) {
+                    (Some(v1), Some(v2)) => Config::new(&v1[0], &v2[0]),
+                    _ => return Err("Didn't find 'text' and 'output' in POST hashmap".to_string())
                 };
                 Ok(config)
             },
