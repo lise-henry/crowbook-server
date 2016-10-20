@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset = "utf-8">
+    <title>Crowbook demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel = "stylesheet" href = "style.css">
+    <link rel="stylesheet" href="foundation.css" />
+    <link rel="stylesheet" href="normalize.css" />
+    <script src="foundation.js"></script>
+  </head>
+  <body>
+    <nav class="top-bar" data-topbar role="navigation">
+      <ul class="title-area">
+        <li class="name">
+          <h1><a href="en">Crowbook</a></h1>
+        </li>
+        <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+        <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+      </ul>
+      
+      <section class="top-bar-section">
+        <!-- Right Nav Section -->
+        <ul class="right">
+          <li><a href="doc_en">Documentation</a></li>
+          <li><a href="https://github.com/lise-henry/crowbook">Github page</a></li>
+        </ul>
+        
+        <!-- Left Nav Section
+        <ul class="left">
+          <li><a href="#">Left Nav Button</a></li>
+        </ul>-->
+      </section>
+    </nav>
+    
+
+    <dl class="sub-nav">
+      <dt>Language:</dt>
+      <dd class="active"><a href="en">English</a></dd>
+      <dd><a href="fr">French</a></dd>
+    </dl>
+
+    
+    <div class = "row">
+      <div class = "large-8 columns">
+        <h1>Crowbook (demo version)</h1>
+      </div>
+    </div>
+    <div id = "form">
+      <form id = "crowbook_form" method = 'post' action = 'result'
+            enctype="application/x-www-form-urlencoded">
+        <div class = "row">
+          <div class = "large-6 columns">
+            <div class = "row">
+              <div class = "large-12 columns">
+                <label>Input text
+                </label>
+                <textarea id = "text_input" name = "text" rows = "20" cols = "80">
+---
+author: your name
+title: your title
+---
+
+## Section 1
+
+Content of the book, *formatted in Markdown*.
+		</textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+	<div class = "row">
+	  <div class = "large-2 columns">
+	    <input type = "submit" value = "OK" />
+	  </div>
+      </form>
+    </div>
+  </body>
+</html>
