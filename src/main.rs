@@ -3,6 +3,9 @@ extern crate router;
 extern crate crowbook;
 extern crate urlencoded;
 extern crate hyper;
+extern crate tempfile;
+
+mod config;
 
 use iron::prelude::*;
 use iron::status;
@@ -10,7 +13,17 @@ use iron::mime::Mime;
 use iron::error::HttpResult;
 use hyper::server::Listening;
 use router::Router;
+use crowbook::Book;
+use crowbook::Number;
+use crowbook::HtmlSingleRenderer;
+use crowbook::InfoLevel;
+use tempfile::NamedTempFile;
+
 use std::error::Error;
+use std::io::Write;
+
+use config::Config;
+
 
 fn main() {
     fn router() -> Router {
@@ -21,6 +34,7 @@ fn main() {
         router.get("/foundation.css", show_foundation_css, "foundation");
         router.get("/normalize.css", show_normalize_css, "normalize");
         router.get("/foundation.js", show_foundation_js, "foundation_js");
+        router.post("/result", show_result, "result");
         // router.get("/fr", show_fr);
         // router.get("/doc_en", show_doc_en);
         // router.get("/doc_fr", show_doc_fr);
@@ -65,6 +79,24 @@ fn main() {
         Ok(Response::with((content_type, status::Ok, text)))
     }
 
+    fn show_result(request: &mut Request) -> IronResult<Response> {
+        let result:Result<Config,String> = Config::new_from_request(request);
+        let response = match result {
+            Ok(config) => {
+                let mut tmpfile = NamedTempFile::new().unwrap();
+                tmpfile.write_all(config.text.as_bytes()).unwrap();
+
+                let mut book = Book::new_from_markdown_file(tmpfile.path().to_str().unwrap(), InfoLevel::Quiet, &[]).unwrap();
+                let mut renderer = HtmlSingleRenderer::new(&book);
+                renderer.render_book().unwrap()
+            },
+            Err(e) => format!("<html><body>{}</body></html>", e),
+        };
+        
+        let content_type = "text/html; charset=UTF-8".parse::<Mime>().unwrap();
+        Ok(Response::with((content_type, status::Ok, response)))        
+    }
+    
     let ips = vec!("127.0.0.1:3000");
     let mut res:Vec<HttpResult<Listening>> = vec!();
     

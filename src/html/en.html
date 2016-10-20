@@ -61,9 +61,60 @@ author: your name
 title: your title
 ---
 
-## Section 1
+## Section
 
-Content of the book, *formatted in Markdown*.
+Content of the book, formatted in Markdown.
+
+Markdown is quite easy to use: paragraphs are separated by an empty line, and there is few syntax, such as:
+
+- list element
+- another list element
+    - nested list
+- *italics*
+- _bold_
+- [Link name)(http://link_url.com)
+
+There are also nice features such as quotes
+
+> Quoting some historical figure always makes you look smart.
+
+*(Abrahalm Lincoln)*
+
+code blocks:
+
+```rust
+fn main() {
+    println!("Hello, world!");
+}
+```
+
+or even footnotes[^1].
+
+[^1]: referenced and defined like this.
+
+
+
+### Subsection
+
+"Crowbook" also tries to perform some typgraphic enhancements, such as 'smart quotes' (trying to replace
+straight quotes with curly ones), or ellipsis...
+
+### Another subsection
+
+Crowbook has more options than "author" and "title". You can define them in the inline YAML block at the beginning:
+
+```yaml
+---
+author: Me
+title: A great text
+
+rendering.num_depth: 6     # We want all our sections, subsections and so on to be numbered!
+rendering.initials: true   # A big initial at the beginning of the chapter!
+
+html.header: "MY BOOK"     # A header at the top of the HTML page
+html.footer: "ME"          # A footer at the bottom of the HTML page
+```
+
 		</textarea>
               </div>
             </div>
