@@ -44,18 +44,25 @@
     <div class = "row">
       <div class = "large-8 columns">
         <h1>Crowbook (demo version)</h1>
+	<p>This an online demonstration version of <a href = "https://github.com/lise-henry/crowbook">Crowbook</a>. Crowbook can render books written in Markdown to HTML, PDF or EPUB.</p>
+	<p>For pratical reasons, this demo version can only generate single HTML pages and EPUB files, and it is limited to a single Markdown "file". In order to use all features of Crowbook, <a href = "https://github.com/lise-henry/crowbook">install it on your computer (it's free)</a>.</p>
+	<h2>Usage</h2>
+	<p>Simply edit the textarea below, choose the output format yout want to generate, and click on "OK".</p>
+	<p>For more information on Crowbook options, see the <a href = "http://lise-henry.github.io/crowbook/book/html/index.html">user guide</a> and more specifically the <a href = "http://lise-henry.github.io/crowbook/book/html/chapter_002.html">chapter on the configuration file</a>.</p>
+	<p>For more information on the Markdown format, see the <a href = "http://commonmark.org/help/tutorial/">CommonMark tutorial</a>.</p>
+      </div>
+      <div class = "large-4 columns">
+	<img src = "crowbook.png" />
       </div>
     </div>
     <div id = "form">
       <form id = "crowbook_form" method = 'post' action = 'result'
             enctype="application/x-www-form-urlencoded">
         <div class = "row">
-          <div class = "large-6 columns">
-            <div class = "row">
-              <div class = "large-12 columns">
-                <label>Input text
-                </label>
-                <textarea id = "text_input" name = "text" rows = "20" style = "width: 100%;">
+          <div class = "row">
+            <label>Input text
+            </label>
+            <textarea id = "text_input" name = "text" rows = "20" style = "width: 100%;">
 ---
 author: your name
 title: your title
@@ -108,32 +115,30 @@ Crowbook has more options than "author" and "title". You can define them in the 
 author: Me
 title: A great text
 
-rendering.num_depth: 6     # We want all our sections, subsections and so on to be numbered!
 rendering.initials: true   # A big initial at the beginning of the chapter!
 
 html.header: "MY BOOK"     # A header at the top of the HTML page
 html.footer: "ME"          # A footer at the bottom of the HTML page
+---
 ```
-		</textarea>
-              </div>
-            </div>
-	    <div class = "row collapse">
-	      <div class = "large-3 columns">
-		<span class = "prefix" title = "Output format">Output format</span>
-	      </div>
-	      <div class = "large-2 columns">
-		<select name = "output" style = "width: 100%;">
-		  <option value = "html" selected>HTML</option>
-		    <option value = "epub">EPUB</option>
-		</select>
-	      </div>
-	      <div class = "large-2 columns">
-		<p class = "button postfix" onclick="document.getElementById('crowbook_form').submit();">
-		  OK
-		</p>
-	      </div>
-	    </div>
+	    </textarea>
           </div>
+	  <div class = "row collapse">
+	    <div class = "large-3 columns">
+	      <span class = "prefix" title = "Output format">Output format</span>
+	    </div>
+	    <div class = "large-2 columns">
+	      <select name = "output" style = "width: 100%;">
+		<option value = "html" selected>HTML</option>
+		<option value = "epub">EPUB</option>
+	      </select>
+	    </div>
+	    <div class = "large-2 columns">
+	      <p class = "button postfix" onclick="document.getElementById('crowbook_form').submit();">
+		OK
+	      </p>
+	    </div>
+	  </div>
         </div>
       </form>
     </div>

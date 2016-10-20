@@ -36,6 +36,7 @@ fn main() {
         router.get("/foundation.css", show_foundation_css, "foundation");
         router.get("/normalize.css", show_normalize_css, "normalize");
         router.get("/foundation.js", show_foundation_js, "foundation_js");
+        router.get("/crowbook.png", show_logo, "logo");
         router.post("/result", show_result, "result");
         // router.get("/fr", show_fr);
         // router.get("/doc_en", show_doc_en);
@@ -49,6 +50,12 @@ fn main() {
         // router.get("/foundation.js", show_foundation_js);
         // router.get("/caribon.png", show_logo);
         router
+    }
+
+    fn show_logo(_: &mut Request) -> IronResult<Response> {
+        let img:&'static[u8] = include_bytes!("html/crowbook.png");
+        let content_type = "image/png".parse::<Mime>().unwrap();
+        Ok(Response::with((content_type, status::Ok, img)))
     }
 
     fn show_css(_: &mut Request) -> IronResult<Response> {
