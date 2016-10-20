@@ -39,7 +39,7 @@ impl Config {
 pub fn ips_from_args() -> Vec<String> {
     let mut args = env::args().into_iter();
     if args.len() < 2 {
-        vec!("localhost:3000".to_string())
+        vec!("localhost:3001".to_string())
     } else {
         args.next();
         args.collect()

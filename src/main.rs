@@ -14,13 +14,11 @@ use iron::error::HttpResult;
 use hyper::server::Listening;
 use router::Router;
 use crowbook::Book;
-use crowbook::Number;
 use crowbook::HtmlSingleRenderer;
 use crowbook::EpubRenderer;
 use crowbook::InfoLevel;
 use tempfile::NamedTempFile;
 
-use std::error::Error;
 use std::io::Write;
 use std::io::Read;
 
@@ -38,7 +36,7 @@ fn main() {
         router.get("/foundation.js", show_foundation_js, "foundation_js");
         router.get("/crowbook.png", show_logo, "logo");
         router.post("/result", show_result, "result");
-        // router.get("/fr", show_fr);
+        router.get("/fr", show_fr, "fr");
         // router.get("/doc_en", show_doc_en);
         // router.get("/doc_fr", show_doc_fr);
         // router.get("/style.css", show_css);
@@ -88,13 +86,19 @@ fn main() {
         Ok(Response::with((content_type, status::Ok, text)))
     }
 
+    fn show_fr(_: &mut Request) -> IronResult<Response> {
+        let text = include_str!("html/fr.html");
+        let content_type = "text/html; charset=UTF-8".parse::<Mime>().unwrap();
+        Ok(Response::with((content_type, status::Ok, text)))
+    }
+
     fn render_book(config: &Config) -> crowbook::Result<Response> {
         let mut tmpfile = NamedTempFile::new().unwrap();
         tmpfile.write_all(config.text.as_bytes()).unwrap();
 
         match config.output.as_str() {
             "html" => {
-                let mut book = try!(Book::new_from_markdown_file(tmpfile.path().to_str().unwrap(), InfoLevel::Quiet, &[]));
+                let book = try!(Book::new_from_markdown_file(tmpfile.path().to_str().unwrap(), InfoLevel::Quiet, &[]));
                 let mut renderer = HtmlSingleRenderer::new(&book);
                 let content = try!(renderer.render_book());
                 let content_type = "text/html; charset=UTF-8".parse::<Mime>().unwrap();
@@ -141,10 +145,10 @@ fn main() {
         Ok(response)
     }
     
-    let ips = vec!("127.0.0.1:3000");
+    let ips = config::ips_from_args();
     let mut res:Vec<HttpResult<Listening>> = vec!();
     
     for ip in ips {
-        res.push(Iron::new(router()).http(ip));
+        res.push(Iron::new(router()).http(ip.as_str()));
     }
 }
