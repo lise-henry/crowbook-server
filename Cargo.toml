@@ -5,8 +5,8 @@ authors = ["Elisabeth Henry <liz.henry@ouvaton.org>"]
 
 [dependencies]
 iron = "0.4"
-crowbook = "0.10"
+crowbook = {version = "0.10", default-features = false}
 router = "0.4"
 urlencoded = "0.4"
-hyper = "0.9"
+hyper = {version = "0.9", default-features = false}
 tempfile = "2"
