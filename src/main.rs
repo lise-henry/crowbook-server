@@ -29,16 +29,6 @@ fn main() {
         router.get("/crowbook.png", show_logo, "logo");
         router.post("/result", show_result, "result");
         router.get("/fr", show_fr, "fr");
-        // router.get("/doc_en", show_doc_en);
-        // router.get("/doc_fr", show_doc_fr);
-        // router.get("/style.css", show_css);
-        // router.get("/serialize.js", show_serialize_js);
-        // router.get("/main.js", show_main_js);
-        // router.post("/result", show_result);
-        // router.get("/foundation.css", show_foundation_css);
-        // router.get("/normalize.css", show_normalize_css);
-        // router.get("/foundation.js", show_foundation_js);
-        // router.get("/caribon.png", show_logo);
         router
     }
 
@@ -73,13 +63,15 @@ fn main() {
     }
 
     fn show_en(_: &mut Request) -> IronResult<Response> {
-        let text = include_str!("html/en.html");
+        let text = format!(include_str!("html/en.html"),
+                           version = env!("CARGO_PKG_VERSION"));
         let content_type = "text/html; charset=UTF-8".parse::<Mime>().unwrap();
         Ok(Response::with((content_type, status::Ok, text)))
     }
 
     fn show_fr(_: &mut Request) -> IronResult<Response> {
-        let text = include_str!("html/fr.html");
+        let text = format!(include_str!("html/fr.html"),
+                           version = env!("CARGO_PKG_VERSION"));
         let content_type = "text/html; charset=UTF-8".parse::<Mime>().unwrap();
         Ok(Response::with((content_type, status::Ok, text)))
     }
