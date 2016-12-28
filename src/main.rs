@@ -3,7 +3,6 @@ extern crate router;
 extern crate crowbook;
 extern crate urlencoded;
 extern crate hyper;
-extern crate tempfile;
 
 mod config;
 
@@ -14,13 +13,6 @@ use iron::error::HttpResult;
 use hyper::server::Listening;
 use router::Router;
 use crowbook::Book;
-use crowbook::HtmlSingleRenderer;
-use crowbook::EpubRenderer;
-use crowbook::InfoLevel;
-use tempfile::NamedTempFile;
-
-use std::io::Write;
-use std::io::Read;
 
 use config::Config;
 
@@ -93,29 +85,20 @@ fn main() {
     }
 
     fn render_book(config: &Config) -> crowbook::Result<Response> {
-        let mut tmpfile = NamedTempFile::new().unwrap();
-        tmpfile.write_all(config.text.as_bytes()).unwrap();
-
+        let mut book = Book::new();
+        book.read_markdown_config(config.text.as_bytes())?;
+        let mut buffer = vec!();
+        
         match config.output.as_str() {
             "html" => {
-                let book = try!(Book::new_from_markdown_file(tmpfile.path().to_str().unwrap(), InfoLevel::Quiet, &[]));
-                let mut renderer = HtmlSingleRenderer::new(&book);
-                let content = try!(renderer.render_book());
+                book.render_format_to("html", &mut buffer)?;
                 let content_type = "text/html; charset=UTF-8".parse::<Mime>().unwrap();
-                return Ok(Response::with((content_type, status::Ok, content)));
+                return Ok(Response::with((content_type, status::Ok, buffer)));
             },
             "epub" => {
-                let mut epubfile = NamedTempFile::new().unwrap();
-                let book = try!(Book::new_from_markdown_file(tmpfile.path().to_str().unwrap(),
-                                                             InfoLevel::Quiet,
-                                                             &[("output.epub", epubfile.path().to_str().unwrap())]));
-                let mut renderer = EpubRenderer::new(&book);
-
-                try!(renderer.render_book());
-                let mut content = vec!();
-                epubfile.read_to_end(&mut content).unwrap();
+                book.render_format_to("epub", &mut buffer)?;
                 let content_type = "application/epub+zip".parse::<Mime>().unwrap();
-                return Ok(Response::with((content_type, status::Ok, content)));
+                return Ok(Response::with((content_type, status::Ok, buffer)));
             }
             _ => {
                 return Err(crowbook::Error::default(crowbook::Source::empty(),

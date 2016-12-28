@@ -1,12 +1,11 @@
 [package]
 name = "crowbook-server"
-version = "0.10.0"
+version = "0.11.0-pre"
 authors = ["Elisabeth Henry <liz.henry@ouvaton.org>"]
 
 [dependencies]
 iron = "0.4"
-crowbook = {version = "0.10", default-features = false}
+crowbook = {git = "https://github.com/lise-henry/crowbook.git", default-features = false}
 router = "0.4"
 urlencoded = "0.4"
 hyper = {version = "0.9", default-features = false}
-tempfile = "2"
